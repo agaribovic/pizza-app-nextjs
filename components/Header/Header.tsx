@@ -20,6 +20,7 @@ export default function Header() {
       <Modal
         isModalOpen={modalType === "pizzaOrder"}
         closeModal={() => dispatch(closeModal())}
+        title="Add Pizza"
       >
         <PizzaForm />
       </Modal>

@@ -53,7 +53,7 @@ export default function PizzaForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 p-6 text-gray-900">
+    <form onSubmit={handleSubmit} className="space-y-4 p-6 text-gray-900 -mt-4">
       <div>
         <label htmlFor="name" className="block">
           Name:
