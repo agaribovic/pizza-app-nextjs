@@ -5,7 +5,7 @@ import { useRef } from "react";
 import { PizzaType } from "@/app/page";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
-import { pizzaDetails, closeModal } from "@/redux/slices/modalSlice";
+import { pizzaDetails, closeModal, pizzaEdit } from "@/redux/slices/modalSlice";
 import { useDeletePizzaMutation } from "@/redux/api/pizzaApi";
 import Spinner from "../Spinner/Spinner";
 
@@ -36,7 +36,7 @@ const Card: React.FC<PropType> = ({ pizzaData }) => {
     >
       {!isDeleting ? (
         <Image
-          src={pizzaData.image as string}
+          src={pizzaData.image}
           alt={pizzaData.name}
           width={250}
           height={250}
@@ -53,7 +53,7 @@ const Card: React.FC<PropType> = ({ pizzaData }) => {
 
       <button
         className="absolute left-1/2 cursor-pointer"
-        onClick={() => alert(pizzaData.id)}
+        onClick={() => dispatch(pizzaEdit(pizzaData))}
       >
         Edit
       </button>

@@ -25,6 +25,14 @@ export const pizzaApi = createApi({
       }),
       invalidatesTags: ["Pizza"],
     }),
+    editPizza: builder.mutation<PizzaType, { id: number; data: FormData }>({
+      query: ({ id, data }) => ({
+        url: `/api/pizzas/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["Pizza"],
+    }),
   }),
 });
 
@@ -32,4 +40,5 @@ export const {
   useGetPizzasQuery,
   useAddPizzaMutation,
   useDeletePizzaMutation,
+  useEditPizzaMutation,
 } = pizzaApi;

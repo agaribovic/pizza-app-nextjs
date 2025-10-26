@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import fs from "fs";
-import path from "path";
+import { saveFile } from "./utils/fileupload";
 
 const prisma = new PrismaClient();
 
@@ -31,12 +30,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const filePath = path.join(process.cwd(), "public", "images", file.name);
-    fs.writeFileSync(filePath, buffer);
+    const imagePath = await saveFile(file);
 
     const pizza = await prisma.pizza.create({
-      data: { name, price, image: `/images/${file.name}` },
+      data: { name, price, image: imagePath },
     });
 
     return NextResponse.json(pizza);

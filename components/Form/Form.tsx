@@ -1,6 +1,11 @@
 import { useState, useRef, FormEvent, ChangeEvent } from "react";
-import { useAddPizzaMutation } from "@/redux/api/pizzaApi";
+import {
+  useAddPizzaMutation,
+  useEditPizzaMutation,
+} from "@/redux/api/pizzaApi";
 import Spinner from "../Spinner/Spinner";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 interface FormData {
   name: string;
@@ -19,6 +24,8 @@ export default function PizzaForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const numberRef = useRef<HTMLInputElement>(null);
   const [addPizza] = useAddPizzaMutation();
+  const [editPizza] = useEditPizzaMutation();
+  const modalType = useSelector((state: RootState) => state.modalType);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, files, type } = e.target;
@@ -38,7 +45,9 @@ export default function PizzaForm() {
     data.append("file", formData.image);
 
     try {
-      await addPizza(data).unwrap();
+      (await modalType.value) === "pizzaOrder"
+        ? addPizza(data).unwrap()
+        : editPizza({ id: modalType.selectedPizza!.id, data }).unwrap();
       setTimeout(() => {
         setFormData({ name: "", price: 0.0, image: "" });
         if (fileInputRef.current) fileInputRef.current.value = "";
@@ -61,7 +70,7 @@ export default function PizzaForm() {
         <input
           type="text"
           name="name"
-          value={formData.name}
+          defaultValue={modalType.selectedPizza?.name}
           onChange={handleChange}
           className="border rounded p-2 w-full"
           id="name"
@@ -72,12 +81,12 @@ export default function PizzaForm() {
 
       <div>
         <label htmlFor="price" className="block">
-          Price (BAM):
+          Price (USD):
         </label>
         <input
           type="number"
           name="price"
-          value={formData.price}
+          defaultValue={modalType.selectedPizza?.price}
           onChange={handleChange}
           ref={numberRef}
           className="border rounded p-2 w-full"
@@ -85,6 +94,7 @@ export default function PizzaForm() {
           min="1"
           max="200"
           step="0.01"
+          placeholder="11.50"
           required
         />
       </div>

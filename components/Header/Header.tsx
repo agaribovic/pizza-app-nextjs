@@ -18,9 +18,9 @@ export default function Header() {
         🍕
       </button>
       <Modal
-        isModalOpen={modalType === "pizzaOrder"}
+        isModalOpen={modalType === "pizzaOrder" || modalType === "pizzaEdit"}
         closeModal={() => dispatch(closeModal())}
-        title="Add Pizza"
+        title={modalType === "pizzaOrder" ? "Add Pizza" : "Edit Pizza"}
       >
         <PizzaForm />
       </Modal>
