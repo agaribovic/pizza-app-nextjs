@@ -113,7 +113,6 @@ export default function PizzaForm() {
           required
         />
       </div>
-
       <button
         type="submit"
         className={`bg-[#1B2533] text-white px-4 py-2 rounded w-32 h-12 ${

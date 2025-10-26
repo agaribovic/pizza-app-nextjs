@@ -2,6 +2,7 @@
 import Card from "@/components/Card/Card";
 import Spinner from "@/components/Spinner/Spinner";
 import { useGetPizzasQuery } from "@/redux/api/pizzaApi";
+import { Overlay } from "@/components/Overlay/Overlay";
 
 export type PizzaType = {
   id: number;
@@ -10,16 +11,6 @@ export type PizzaType = {
   image: string;
   createdAt: Date;
 };
-
-type OverlayProps = {
-  children: React.ReactNode;
-};
-
-export const Overlay = ({ children }: OverlayProps) => (
-  <div className="fixed inset-0 flex justify-center items-center bg-gray-100 bg-opacity-50 z-50">
-    {children}
-  </div>
-);
 
 export default function Home() {
   const { data: pizzaData, isLoading, isError } = useGetPizzasQuery();
