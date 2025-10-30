@@ -40,6 +40,7 @@ const Card: React.FC<PropType> = ({ pizzaData }) => {
           alt={pizzaData.name}
           width={250}
           height={250}
+          className="w-[250px] h-[250px] object-cover"
         />
       ) : (
         <Spinner size={200} />

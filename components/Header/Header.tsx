@@ -15,14 +15,17 @@ export default function Header() {
   );
 
   return (
-    <header className="bg-gray-800 text-center p-4">
+    <header
+      className="flex justify-between items-center bg-gray-800 text-center 
+                   px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 py-4"
+    >
       <Sort
         pizzas={pizzaData}
         onSort={(sorted) => dispatch(setSortedPizzas(sorted))}
       />
 
       <button
-        className="relative left-2/5 cursor-pointer text-4xl"
+        className="cursor-pointer text-4xl"
         onClick={() => dispatch(pizzaOrder())}
       >
         🍕

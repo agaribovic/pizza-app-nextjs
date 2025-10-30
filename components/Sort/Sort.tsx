@@ -49,7 +49,7 @@ export default function Sort({ pizzas, onSort }: SortProps) {
       <select
         id="sortBy"
         name="sortBy"
-        className="relative right-2/5 bg-white text-gray-800 font-semibold p-2 
+        className="bg-white text-gray-800 font-semibold p-2
                   rounded cursor-pointer border-none shadow-md focus:outline-none 
                   focus:ring-2 focus:ring-gray-400 transition duration-200 text-xl"
         onChange={handleChange}
