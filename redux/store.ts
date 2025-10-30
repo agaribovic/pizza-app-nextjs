@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import modalReducer from "./slices/modalSlice";
 import { pizzaApi } from "./api/pizzaApi";
+import modalReducer from "./slices/modalSlice";
+import pizzaReducer from "./slices/pizzaDataSlice";
 
 export const store = configureStore({
   reducer: {
     modalType: modalReducer,
     [pizzaApi.reducerPath]: pizzaApi.reducer,
+    pizzaData: pizzaReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(pizzaApi.middleware),
