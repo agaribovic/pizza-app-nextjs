@@ -53,8 +53,9 @@ export default function Sort({ pizzas, onSort }: SortProps) {
                   rounded cursor-pointer border-none shadow-md focus:outline-none 
                   focus:ring-2 focus:ring-gray-400 transition duration-200 text-xl"
         onChange={handleChange}
+        defaultValue=""
       >
-        <option value="" disabled selected>
+        <option value="" disabled>
           Sort by:
         </option>
         <option value="name-asc">Name A → Z</option>
