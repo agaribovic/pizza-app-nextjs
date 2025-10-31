@@ -29,7 +29,7 @@ const Card: React.FC<PropType> = ({ pizzaData }) => {
 
   return (
     <div
-      className="border p-7 shadow-2xl relative"
+      className="border p-7 shadow-2xl relative flex flex-col items-center mt-10"
       ref={divRef}
       onMouseOver={handleBorder}
       onMouseOut={handleBorder}
@@ -45,26 +45,28 @@ const Card: React.FC<PropType> = ({ pizzaData }) => {
       ) : (
         <Spinner size={200} />
       )}
-      <button
-        className="absolute left-1/8 cursor-pointer"
-        onClick={() => dispatch(pizzaDetails(pizzaData))}
-      >
-        View More
-      </button>
+      <div className="flex gap-2 absolute top-75">
+        <button
+          className="cursor-pointer bg-yellow-300 text-red-700 font-bold px-4 py-2 rounded-lg shadow-md hover:bg-yellow-400 transition w-25 h-12 text-sm"
+          onClick={() => dispatch(pizzaDetails(pizzaData))}
+        >
+          🍕 View
+        </button>
 
-      <button
-        className="absolute left-1/2 cursor-pointer"
-        onClick={() => dispatch(pizzaEdit(pizzaData))}
-      >
-        Edit
-      </button>
+        <button
+          className="cursor-pointer bg-green-300 text-yellow-800 font-bold px-4 py-2 rounded-lg shadow-md hover:bg-green-400 transition w-25 h-12 text-sm"
+          onClick={() => dispatch(pizzaEdit(pizzaData))}
+        >
+          🧀 Edit
+        </button>
 
-      <button
-        className="absolute right-1/8 cursor-pointer"
-        onClick={async () => await deletePizza(pizzaData?.id).unwrap()}
-      >
-        Delete
-      </button>
+        <button
+          className="cursor-pointer bg-red-500 text-white font-bold px-4 py-2 rounded-lg shadow-md hover:bg-red-600 transition w-25 h-12 text-sm"
+          onClick={async () => await deletePizza(pizzaData?.id).unwrap()}
+        >
+          🗑️ Delete
+        </button>
+      </div>
 
       <Modal
         isModalOpen={modalType.value === "pizzaDetails"}
