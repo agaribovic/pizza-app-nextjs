@@ -27,6 +27,14 @@ export default function PizzaForm() {
   const [editPizza] = useEditPizzaMutation();
   const modalType = useSelector((state: RootState) => state.modalType);
 
+  const { value: modal } = modalType;
+  const { name, price, image } = formData;
+  const isAddMode = modal === "pizzaOrder";
+  const isEditMode = modal === "pizzaEdit";
+  const isAddInvalid = isAddMode && (!name || !price || !image);
+  const isEditInvalid = isEditMode && (!name && !price && !image);
+  const btnDisabled = (isAddInvalid || isEditInvalid || submitting);
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, files, type } = e.target;
     setFormData({
@@ -38,18 +46,22 @@ export default function PizzaForm() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitting(true);
-    if (!formData.image || !(formData.image instanceof File)) return;
+    if (isAddMode && (!formData.image || !(formData.image instanceof File))) return;
     const data = new FormData();
-    data.append("name", formData.name);
-    data.append("price", formData.price.toString());
-    data.append("file", formData.image);
+
+    if (name) data.append("name", name);
+    if (price !== null && price !== 0) {
+      data.append("price", price.toString());
+    }
+    if (formData.image instanceof File) data.append("file", formData.image);
+
 
     try {
-      (await modalType.value) === "pizzaOrder"
+      await isAddMode
         ? addPizza(data).unwrap()
         : editPizza({ id: modalType.selectedPizza!.id, data }).unwrap();
       setTimeout(() => {
-        setFormData({ name: "", price: 0.0, image: "" });
+        isAddMode && setFormData({ name: "", price: 0.0, image: "" });
         if (fileInputRef.current) fileInputRef.current.value = "";
         setSubmitting(false);
       }, 1000);
@@ -75,7 +87,7 @@ export default function PizzaForm() {
           className="border rounded p-2 w-full"
           id="name"
           placeholder="Margherita"
-          required
+          required={isAddMode}
         />
       </div>
 
@@ -95,7 +107,7 @@ export default function PizzaForm() {
           max="200"
           step="0.01"
           placeholder="11.50"
-          required
+          required={isAddMode}
         />
       </div>
 
@@ -110,17 +122,16 @@ export default function PizzaForm() {
           ref={fileInputRef}
           className="border rounded p-2 w-full"
           id="image"
-          required
+          required={isAddMode}
         />
       </div>
       <button
         type="submit"
-        className={`bg-[#1B2533] text-white px-4 py-2 rounded w-32 h-12 ${
-          !formData.name || !formData.price || !formData.image || submitting
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-[#1B2533] cursor-pointer"
-        }`}
-        disabled={!formData.name || !formData.price || !formData.image}
+        className={`bg-[#1B2533] text-white px-4 py-2 rounded w-32 h-12 ${btnDisabled
+          ? "bg-gray-400 cursor-not-allowed"
+          : "bg-[#1B2533] cursor-pointer"
+          }`}
+        disabled={btnDisabled}
       >
         {submitting ? <Spinner size={30} /> : "Submit"}
       </button>

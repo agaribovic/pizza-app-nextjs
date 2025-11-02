@@ -28,7 +28,7 @@ export const pizzaApi = createApi({
     editPizza: builder.mutation<PizzaType, { id: number; data: FormData }>({
       query: ({ id, data }) => ({
         url: `/api/pizzas/${id}`,
-        method: "PUT",
+        method: "PATCH",
         body: data,
       }),
       invalidatesTags: ["Pizza"],

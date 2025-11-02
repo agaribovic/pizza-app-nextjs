@@ -23,24 +23,26 @@ export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
     const name = formData.get("name") as string;
-    const price = parseFloat(formData.get("price") as string);
+    const priceStr = formData.get("price") as string;
     const file = formData.get("file") as File;
 
-    if (!file || !name || isNaN(price)) {
+    const price = parseFloat(priceStr);
+
+    if (!name || isNaN(price) || !file) {
       return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     }
 
-    const imagePath = await saveFile(file);
+    const imageUrl = await saveFile(file);
 
     const pizza = await prisma.pizza.create({
-      data: { name, price, image: imagePath },
+      data: { name, price, image: imageUrl },
     });
 
     return NextResponse.json(pizza);
   } catch (err) {
-    console.error(err);
+    console.error("Error creating pizza:", err);
     return NextResponse.json(
-      { error: "Something went wrong" },
+      { error: "Failed to create pizza" },
       { status: 500 }
     );
   }

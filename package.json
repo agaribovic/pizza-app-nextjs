@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.9.1",
+    "@supabase/supabase-js": "^2.78.0",
     "clsx": "^2.1.1",
     "formidable": "^3.5.4",
     "next": "15.5.5",
@@ -27,6 +28,7 @@
     "@types/formidable": "^3.4.6",
     "@types/jest": "^30.0.0",
     "@types/node": "^20",
+    "@types/node-fetch": "^2.6.13",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "prisma": "^6.18.0",

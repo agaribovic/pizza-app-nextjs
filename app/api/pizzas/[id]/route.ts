@@ -4,7 +4,7 @@ import { saveFile } from "../utils/fileupload";
 
 const prisma = new PrismaClient();
 
-export async function PUT(
+export async function PATCH(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
@@ -17,16 +17,15 @@ export async function PUT(
     }
 
     const formData = await req.formData();
-    const name = formData.get("name") as string;
-    const priceStr = formData.get("price") as string;
-    const price = parseFloat(priceStr);
-    const file =
-      (formData.get("file") as File | null) ||
-      (formData.get("image") as File | null);
+    const name = formData.get("name") as string | null;
+    const priceStr = formData.get("price") as string | null;
+    const file = formData.get("file") as File | null;
 
-    if (!name || isNaN(price)) {
+    const price = priceStr ? parseFloat(priceStr) : undefined;
+
+    if (!name && !price && !file) {
       return NextResponse.json(
-        { error: "Invalid name or price" },
+        { error: "No fields provided to update" },
         { status: 400 }
       );
     }
@@ -34,27 +33,19 @@ export async function PUT(
     const existingPizza = await prisma.pizza.findUnique({
       where: { id: pizzaId },
     });
+
     if (!existingPizza) {
       return NextResponse.json({ error: "Pizza not found" }, { status: 404 });
     }
 
-    let imagePath = existingPizza.image;
-
-    if (file) {
-      const ext = file.name.split(".").pop();
-      const uniqueName = `${Date.now()}.${ext}`;
-      const newFile = new File([file], uniqueName, { type: file.type });
-
-      imagePath = await saveFile(newFile);
-    }
+    const updateData: Record<string, any> = {};
+    if (name) updateData.name = name;
+    if (price !== undefined && !isNaN(price)) updateData.price = price;
+    if (file) updateData.image = await saveFile(file);
 
     const updatedPizza = await prisma.pizza.update({
       where: { id: pizzaId },
-      data: {
-        name,
-        price,
-        image: imagePath,
-      },
+      data: updateData,
     });
 
     return NextResponse.json({
@@ -64,7 +55,7 @@ export async function PUT(
   } catch (err) {
     console.error("Error updating pizza:", err);
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Failed to update pizza" },
       { status: 500 }
     );
   }
