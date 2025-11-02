@@ -1,46 +1,59 @@
 import { createClient } from "@supabase/supabase-js";
 
-/**
- * Uploads a file to Supabase Storage (optionally in a subfolder)
- * and returns the public URL of the uploaded file.
- *
- * @param file - File object from FormData
- * @param folder - Optional subfolder inside the Supabase bucket
- * @returns string - Public URL of the uploaded file
- */
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 export async function saveFile(file: File, folder = ""): Promise<string> {
   if (!file) throw new Error("No file provided");
 
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
   try {
-    const ext = file.name.split(".").pop();
-    const base = file.name.replace(/\s+/g, "_").replace(/\.[^/.]+$/, "");
-    const uniqueName = `${base}-${Date.now()}.${ext}`;
     const bucket = process.env.SUPABASE_BUCKET!;
-
-    const { data, error } = await supabase.storage
+    const { data: listData, error: listError } = await supabase.storage
       .from(bucket)
-      .upload(`${folder ? folder + "/" : ""}${uniqueName}`, file);
+      .list("", { limit: 1 });
 
-    if (error) {
-      console.error("Supabase upload error:", error);
-      throw new Error(`Supabase upload failed: ${error.message}`);
+    if (listError) {
+      console.error("Storage list error (auth/permission):", listError);
+      throw listError;
+    }
+    console.log("Storage list OK, entries:", listData?.length ?? 0);
+
+    const ext = String(file.name).split(".").pop();
+    const base = String(file.name)
+      .replace(/\s+/g, "_")
+      .replace(/\.[^/.]+$/, "");
+    const uniqueName = `${base}-${Date.now()}.${ext}`;
+    const path = `${folder ? folder + "/" : ""}${uniqueName}`;
+
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from(bucket)
+      .upload(path, file);
+
+    if (uploadError) {
+      console.error("Supabase upload error:", uploadError);
+      throw uploadError;
     }
 
-    const { publicUrl } = supabase.storage
+    const publicResult = supabase.storage
       .from(bucket)
-      .getPublicUrl(data.path).data;
+      .getPublicUrl(uploadData?.path);
+    const publicUrl = publicResult?.data?.publicUrl;
+    if (publicUrl) return publicUrl;
 
-    if (!publicUrl) throw new Error("Failed to get public URL");
+    const { data: signedData, error: signedError } = await supabase.storage
+      .from(bucket)
+      .createSignedUrl(uploadData?.path, 60 * 60);
 
-    return publicUrl;
+    if (signedError) {
+      console.error("createSignedUrl error:", signedError);
+      throw signedError;
+    }
+
+    return signedData.signedUrl;
   } catch (err) {
     console.error("Error in saveFile:", err);
-    throw new Error("Failed to upload file to Supabase");
+    throw err;
   }
 }
