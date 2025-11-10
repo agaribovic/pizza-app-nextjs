@@ -18,7 +18,7 @@ export default function Modal({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="absolute inset-0 bg-black/10" onClick={closeModal}></div>
+      <div className="absolute inset-0 !bg-black !opacity-10" onClick={closeModal}></div>
       <div className="relative bg-white rounded-2xl shadow-lg p-6 z-10 w-[90%] max-w-md text-xl">
         <h1 className="text-3xl text-center font-bold text-gray-900 mb-5">{title}</h1>
         {children}

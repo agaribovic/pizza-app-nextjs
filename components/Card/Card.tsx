@@ -8,6 +8,7 @@ import { RootState, AppDispatch } from "../../redux/store";
 import { pizzaDetails, closeModal, pizzaEdit } from "@/redux/slices/modalSlice";
 import { useDeletePizzaMutation } from "@/redux/api/pizzaApi";
 import Spinner from "../Spinner/Spinner";
+import PizzaForm from "../Form/Form";
 
 type PropType = {
   pizzaData: PizzaType;
@@ -95,6 +96,16 @@ const Card: React.FC<PropType> = ({ pizzaData }) => {
           <strong>Description: </strong> Nam eu fringilla felis. Curabitur in
           magna molestie, tristique massa nec, molestie lectus.
         </p>
+      </Modal>
+
+      <Modal
+        isModalOpen={
+          modalType.value === "pizzaOrder" || modalType.value === "pizzaEdit"
+        }
+        closeModal={() => dispatch(closeModal())}
+        title={modalType.value === "pizzaOrder" ? "Add Pizza" : "Edit Pizza"}
+      >
+        <PizzaForm />
       </Modal>
     </div>
   );
