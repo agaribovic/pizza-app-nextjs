@@ -20,6 +20,8 @@ const Card: React.FC<PropType> = ({ pizzaData }) => {
   const dispatch = useDispatch<AppDispatch>();
   const createdAt = new Date(modalType.selectedPizza?.createdAt ?? new Date());
   const [deletePizza, { isLoading: isDeleting }] = useDeletePizzaMutation();
+  const isPizzaDetails = modalType.value === "pizzaDetails";
+  const isPizzaForm = modalType.value === "pizzaOrder" || modalType.value === "pizzaEdit";
 
   const handleBorder = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!divRef.current) return;
@@ -69,44 +71,48 @@ const Card: React.FC<PropType> = ({ pizzaData }) => {
         </button>
       </div>
 
-      <Modal
-        isModalOpen={modalType.value === "pizzaDetails"}
-        closeModal={() => dispatch(closeModal())}
-        title="🍕 Details"
-      >
-        <p>
-          <strong>Name: </strong>
-          {modalType.selectedPizza?.name ?? "Name"}
-        </p>
-        <hr />
-        <p className="mt-2">
-          <strong>Price: </strong>${modalType.selectedPizza?.price ?? "Price"}
-        </p>
-        <hr />
-        <p className="mt-2">
-          <strong>Date: </strong>
-          {createdAt?.toLocaleDateString("en-GB", {
-            day: "numeric",
-            month: "long",
-            year: "numeric",
-          }) ?? "Date"}
-        </p>
-        <hr />
-        <p className="mt-2">
-          <strong>Description: </strong> 
-          {modalType.selectedPizza?.description ?? "Description"}
-        </p>
-      </Modal>
-
-      <Modal
-        isModalOpen={
-          modalType.value === "pizzaOrder" || modalType.value === "pizzaEdit"
-        }
-        closeModal={() => dispatch(closeModal())}
-        title={modalType.value === "pizzaOrder" ? "Add 🍕" : "Edit 🍕"}
-      >
-        <PizzaForm />
-      </Modal>
+      {isPizzaDetails && 
+        <Modal
+          isModalOpen={modalType.value === "pizzaDetails"}
+          closeModal={() => dispatch(closeModal())}
+          title="🍕 Details"
+        >
+          <p>
+            <strong>Name: </strong>
+            {modalType.selectedPizza?.name ?? "Name"}
+          </p>
+          <hr />
+          <p className="mt-2">
+            <strong>Price: </strong>${modalType.selectedPizza?.price ?? "Price"}
+          </p>
+          <hr />
+          <p className="mt-2">
+            <strong>Date: </strong>
+            {createdAt?.toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            }) ?? "Date"}
+          </p>
+          <hr />
+          <p className="mt-2">
+            <strong>Description: </strong> 
+            {modalType.selectedPizza?.description ?? "Description"}
+          </p>
+        </Modal>
+      }
+      
+      {isPizzaForm && 
+        <Modal
+          isModalOpen={
+            modalType.value === "pizzaOrder" || modalType.value === "pizzaEdit"
+          }
+          closeModal={() => dispatch(closeModal())}
+          title={modalType.value === "pizzaOrder" ? "Add 🍕" : "Edit 🍕"}
+        >
+          <PizzaForm />
+        </Modal>
+      }
     </div>
   );
 };
