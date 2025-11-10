@@ -13,4 +13,5 @@ model Pizza {
   price  Float
   image  String
   createdAt DateTime @default(now())
+  description String
 }

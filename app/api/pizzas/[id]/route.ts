@@ -19,11 +19,11 @@ export async function PATCH(
     const formData = await req.formData();
     const name = formData.get("name") as string | null;
     const priceStr = formData.get("price") as string | null;
-    const file = formData.get("file") as File | null;
-
     const price = priceStr ? parseFloat(priceStr) : undefined;
-
-    if (!name && !price && !file) {
+    const file = formData.get("file") as File | null;
+    const description = formData.get("description") as string | null;
+    
+    if (!name && !price && !file && !description) {
       return NextResponse.json(
         { error: "No fields provided to update" },
         { status: 400 }
@@ -42,6 +42,7 @@ export async function PATCH(
     if (name) updateData.name = name;
     if (price !== undefined && !isNaN(price)) updateData.price = price;
     if (file) updateData.image = await saveFile(file);
+    if (description) updateData.description = description;
 
     const updatedPizza = await prisma.pizza.update({
       where: { id: pizzaId },

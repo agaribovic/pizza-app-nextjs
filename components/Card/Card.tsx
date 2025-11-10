@@ -72,11 +72,11 @@ const Card: React.FC<PropType> = ({ pizzaData }) => {
       <Modal
         isModalOpen={modalType.value === "pizzaDetails"}
         closeModal={() => dispatch(closeModal())}
-        title="Pizza Details"
+        title="🍕 Details"
       >
         <p>
           <strong>Name: </strong>
-          {modalType.selectedPizza?.name ?? "Pizza"}
+          {modalType.selectedPizza?.name ?? "Name"}
         </p>
         <hr />
         <p className="mt-2">
@@ -93,8 +93,8 @@ const Card: React.FC<PropType> = ({ pizzaData }) => {
         </p>
         <hr />
         <p className="mt-2">
-          <strong>Description: </strong> Nam eu fringilla felis. Curabitur in
-          magna molestie, tristique massa nec, molestie lectus.
+          <strong>Description: </strong> 
+          {modalType.selectedPizza?.description ?? "Description"}
         </p>
       </Modal>
 
@@ -103,7 +103,7 @@ const Card: React.FC<PropType> = ({ pizzaData }) => {
           modalType.value === "pizzaOrder" || modalType.value === "pizzaEdit"
         }
         closeModal={() => dispatch(closeModal())}
-        title={modalType.value === "pizzaOrder" ? "Add Pizza" : "Edit Pizza"}
+        title={modalType.value === "pizzaOrder" ? "Add 🍕" : "Edit 🍕"}
       >
         <PizzaForm />
       </Modal>

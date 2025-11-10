@@ -1,5 +1,7 @@
 "use client";
 import { ReactNode } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 interface ModalProps {
   isModalOpen: boolean;
@@ -8,18 +10,16 @@ interface ModalProps {
   title: string;
 }
 
-export default function Modal({
-  isModalOpen,
-  closeModal,
-  children,
-  title,
-}: ModalProps) {
+export default function Modal({ isModalOpen, closeModal, children, title }: ModalProps) {
   if (!isModalOpen) return null;
+  const modalType = useSelector((state: RootState) => state.modalType);
+
+
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="absolute inset-0 !bg-black !opacity-10" onClick={closeModal}></div>
-      <div className="relative bg-white rounded-2xl shadow-lg p-6 z-10 w-[90%] max-w-md text-xl">
+      <div className="absolute inset-0 bg-black opacity-10" onClick={closeModal}></div>
+      <div className={`relative bg-white rounded-2xl shadow-lg p-6 z-10 text-xl ${modalType.value === "pizzaDetails" ? "w-full max-w-md" : ""}`}>
         <h1 className="text-3xl text-center font-bold text-gray-900 mb-5">{title}</h1>
         {children}
         <button

@@ -14,6 +14,7 @@ export type PizzaType = {
   price: number;
   image: string;
   createdAt: Date;
+  description: string;
 };
 
 export default function Home() {
