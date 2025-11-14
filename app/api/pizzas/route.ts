@@ -26,12 +26,13 @@ export async function POST(req: NextRequest) {
     const priceStr = formData.get("price") as string;
     const price = parseFloat(priceStr);
     const file = formData.get("file") as File;
-    const imageUrl = await saveFile(file);
     const description = formData.get("description") as string;
 
     if (!name || isNaN(price) || !file || !description) {
       return NextResponse.json({ error: "Invalid data" }, { status: 400 });
     }
+
+    const imageUrl = await saveFile(file);
 
     const pizza = await prisma.pizza.create({
       data: { name, price, image: imageUrl, description },

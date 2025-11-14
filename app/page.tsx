@@ -2,11 +2,13 @@
 import Card from "@/components/Card/Card";
 import Spinner from "@/components/Spinner/Spinner";
 import { useGetPizzasQuery } from "@/redux/api/pizzaApi";
+import { useGetAdminQuery } from "@/redux/api/adminApi";
 import { Overlay } from "@/components/Overlay/Overlay";
 import { useEffect } from "react";
 import { setPizzaData } from "@/redux/slices/pizzaDataSlice";
 import { RootState, AppDispatch } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
+import { setLoggedIn } from "@/redux/slices/authSlice";
 
 export type PizzaType = {
   id: number;
@@ -20,13 +22,19 @@ export type PizzaType = {
 export default function Home() {
   const dispatch = useDispatch<AppDispatch>();
   const { data: pizzaData, isLoading, isError } = useGetPizzasQuery();
-  const sortedPizzas = useSelector(
-    (state: RootState) => state.pizzaData.sortedPizzas
-  );
+  const sortedPizzas = useSelector((state: RootState) => state.pizzaData.sortedPizzas);
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const { data: admin } = useGetAdminQuery(undefined, { skip: !isLoggedIn });
 
   useEffect(() => {
     dispatch(setPizzaData(pizzaData ?? []));
   }, [pizzaData]);
+
+  useEffect(() => {
+    if (admin) {
+      dispatch(setLoggedIn({ email: admin.email, role: admin.role }));
+    }
+  }, [admin, dispatch]);
 
   if (isLoading || isError) {
     return (

@@ -1,15 +1,18 @@
 "use client";
+import Sort from "../Sort/Sort";
+import { pizzaOrder } from "@/redux/slices/modalSlice";
+import { adminApi } from "@/redux/api/adminApi";
+import { setSortedPizzas } from "@/redux/slices/pizzaDataSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
-import { pizzaOrder } from "@/redux/slices/modalSlice";
-import { setSortedPizzas } from "@/redux/slices/pizzaDataSlice";
-import Sort from "../Sort/Sort";
+import { useLogoutAdminMutation } from "@/redux/api/adminApi";
+import { setLoggedOut } from "@/redux/slices/authSlice";
 
 export default function Header() {
   const dispatch = useDispatch<AppDispatch>();
-  const pizzaData = useSelector(
-    (state: RootState) => state.pizzaData.pizzaData
-  );
+  const pizzaData = useSelector((state: RootState) => state.pizzaData.pizzaData);
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const [logoutAdmin] = useLogoutAdminMutation();
 
   return (
     <header
@@ -21,12 +24,26 @@ export default function Header() {
         onSort={(sorted) => dispatch(setSortedPizzas(sorted))}
       />
 
-      <button
-        className="cursor-pointer text-4xl"
-        onClick={() => dispatch(pizzaOrder())}
-      >
-        🍕
-      </button>
+      <div className="flex gap-20">
+        {isLoggedIn && (
+          <button
+            onClick={async () => {
+              await logoutAdmin().unwrap();
+              dispatch(adminApi.util.resetApiState());
+              dispatch(setLoggedOut());
+            }}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
+          >
+            Logout
+          </button>
+        )}
+        <button
+          className="cursor-pointer text-4xl"
+          onClick={() => dispatch(pizzaOrder())}
+        >
+          🍕
+        </button>
+      </div>
     </header>
   );
 }

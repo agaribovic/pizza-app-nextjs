@@ -22,7 +22,7 @@ export async function PATCH(
     const price = priceStr ? parseFloat(priceStr) : undefined;
     const file = formData.get("file") as File | null;
     const description = formData.get("description") as string | null;
-    
+
     if (!name && !price && !file && !description) {
       return NextResponse.json(
         { error: "No fields provided to update" },
@@ -30,10 +30,7 @@ export async function PATCH(
       );
     }
 
-    const existingPizza = await prisma.pizza.findUnique({
-      where: { id: pizzaId },
-    });
-
+    const existingPizza = await prisma.pizza.findUnique({ where: { id: pizzaId } });
     if (!existingPizza) {
       return NextResponse.json({ error: "Pizza not found" }, { status: 404 });
     }
@@ -67,16 +64,14 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
-
   const pizzaId = parseInt(id);
+
   if (isNaN(pizzaId)) {
     return NextResponse.json({ error: "Invalid pizza ID" }, { status: 400 });
   }
 
   try {
-    const pizza = await prisma.pizza.delete({
-      where: { id: pizzaId },
-    });
+    const pizza = await prisma.pizza.delete({ where: { id: pizzaId } });
     return NextResponse.json(pizza, { status: 200 });
   } catch (error: any) {
     if (error.code === "P2025") {

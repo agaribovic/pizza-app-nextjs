@@ -37,7 +37,6 @@ export default function Sort({ pizzas, onSort }: SortProps) {
         );
         break;
       case "default":
-        console.log("Error sorting pizzas!");
         break;
     }
 
