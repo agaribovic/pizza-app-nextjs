@@ -9,6 +9,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
 import { pizzaDetails, closeModal, pizzaEdit } from "@/redux/slices/modalSlice";
 import { useDeletePizzaMutation } from "@/redux/api/pizzaApi";
+import { setLoggedOut } from "@/redux/slices/authSlice";
+import { useGetAdminQuery } from "@/redux/api/adminApi";
+import { setLoggedIn } from "@/redux/slices/authSlice";
 
 type PropType = {
   pizzaData: PizzaType;
@@ -21,8 +24,10 @@ const Card: React.FC<PropType> = ({ pizzaData }) => {
   const createdAt = new Date(modalType.selectedPizza?.createdAt ?? new Date());
   const [deletePizza, { isLoading: isDeleting }] = useDeletePizzaMutation();
   const isPizzaDetails = modalType.value === "pizzaDetails";
-  const isPizzaForm = modalType.value === "pizzaOrder" || modalType.value === "pizzaEdit";
-  const isLoggedIn  = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const isPizzaForm =
+    modalType.value === "pizzaOrder" || modalType.value === "pizzaEdit";
+  const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
+  const { data } = useGetAdminQuery();
 
   const handleBorder = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!divRef.current) return;
@@ -32,10 +37,26 @@ const Card: React.FC<PropType> = ({ pizzaData }) => {
   };
 
   useEffect(() => {
+    if (data?.expiresIn) {
+      dispatch(setLoggedIn());
+
+      const timeUntilExpiration = data.expiresIn;
+
+      if (timeUntilExpiration > 0) {
+        const timer = setTimeout(() => {
+          dispatch(setLoggedOut());
+        }, timeUntilExpiration);
+
+        return () => clearTimeout(timer);
+      } else {
+        dispatch(setLoggedOut());
+      }
+    }
+
     if (isLoggedIn) {
       dispatch(closeModal());
     }
-  }, [isLoggedIn, dispatch]);
+  }, [data, isLoggedIn, dispatch]);
 
   return (
     <div
@@ -57,33 +78,32 @@ const Card: React.FC<PropType> = ({ pizzaData }) => {
         <Spinner size={200} />
       )}
       <div className="flex gap-2 absolute top-75">
-    
-          <button
-            className="cursor-pointer bg-yellow-300 text-red-700 font-bold px-4 py-2 rounded-lg shadow-md hover:bg-yellow-400 transition w-24 h-12 text-base"
-            onClick={() => dispatch(pizzaDetails(pizzaData))}
-          >
-            🍕 View
-          </button>
+        <button
+          className="cursor-pointer bg-yellow-300 text-red-700 font-bold px-4 py-2 rounded-lg shadow-md hover:bg-yellow-400 transition w-24 h-12 text-base"
+          onClick={() => dispatch(pizzaDetails(pizzaData))}
+        >
+          🍕 View
+        </button>
 
-          {isLoggedIn && (
-            <>
-              <button
-                className="cursor-pointer bg-green-300 text-yellow-800 font-bold px-4 py-2 rounded-lg shadow-md hover:bg-green-400 transition w-24 h-12 text-base"
-                onClick={() => dispatch(pizzaEdit(pizzaData))}
-              >
-                🧀 Edit
-              </button>
+        {isLoggedIn && (
+          <>
+            <button
+              className="cursor-pointer bg-green-300 text-yellow-800 font-bold px-4 py-2 rounded-lg shadow-md hover:bg-green-400 transition w-24 h-12 text-base"
+              onClick={() => dispatch(pizzaEdit(pizzaData))}
+            >
+              🧀 Edit
+            </button>
 
-              <button
-                className="cursor-pointer bg-red-400 text-yellow-800 font-bold px-4 py-2 rounded-lg shadow-md hover:bg-red-600 transition w-27 h-12 text-base"
-                onClick={async () => await deletePizza(pizzaData?.id).unwrap()}
-              >
-                🗑️ Delete
-              </button>
-            </>
-          )}
-        </div>
-      {isPizzaDetails && 
+            <button
+              className="cursor-pointer bg-red-400 text-yellow-800 font-bold px-4 py-2 rounded-lg shadow-md hover:bg-red-600 transition w-27 h-12 text-base"
+              onClick={async () => await deletePizza(pizzaData?.id).unwrap()}
+            >
+              🗑️ Delete
+            </button>
+          </>
+        )}
+      </div>
+      {isPizzaDetails && (
         <Modal
           isModalOpen={modalType.value === "pizzaDetails"}
           closeModal={() => dispatch(closeModal())}
@@ -108,23 +128,29 @@ const Card: React.FC<PropType> = ({ pizzaData }) => {
           </p>
           <hr />
           <p className="mt-2">
-            <strong>Description: </strong> 
+            <strong>Description: </strong>
             {modalType.selectedPizza?.description ?? "Description"}
           </p>
         </Modal>
-      }
-      
-      {isPizzaForm && 
+      )}
+
+      {isPizzaForm && (
         <Modal
           isModalOpen={
             modalType.value === "pizzaOrder" || modalType.value === "pizzaEdit"
           }
           closeModal={() => dispatch(closeModal())}
-          title={isLoggedIn ? modalType.value === "pizzaOrder" ? "Add 🍕" : "Edit 🍕" : "Login 🍕"}
+          title={
+            isLoggedIn
+              ? modalType.value === "pizzaOrder"
+                ? "Add 🍕"
+                : "Edit 🍕"
+              : "Login 🍕"
+          }
         >
           <Form />
         </Modal>
-      }
+      )}
     </div>
   );
 };

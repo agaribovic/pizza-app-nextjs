@@ -1,30 +1,18 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
-interface AuthState {
-  isLoggedIn: boolean;
-  email?: string;
-  role?: "admin";
-}
-
-const initialState: AuthState = {
+const initialState = {
   isLoggedIn: false,
-  email: undefined,
-  role: undefined,
 };
 
 export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setLoggedIn: (state, action: PayloadAction<{ email: string; role: "admin" }>) => {
+    setLoggedIn: (state) => {
       state.isLoggedIn = true;
-      state.email = action.payload.email;
-      state.role = action.payload.role;
     },
     setLoggedOut: (state) => {
       state.isLoggedIn = false;
-      state.email = undefined;
-      state.role = undefined;
     },
   },
 });

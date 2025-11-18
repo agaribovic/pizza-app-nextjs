@@ -1,5 +1,8 @@
 import { useState, useRef, FormEvent, ChangeEvent } from "react";
-import { useAddPizzaMutation, useEditPizzaMutation } from "@/redux/api/pizzaApi";
+import {
+  useAddPizzaMutation,
+  useEditPizzaMutation,
+} from "@/redux/api/pizzaApi";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
 import { useLoginAdminMutation } from "@/redux/api/adminApi";
@@ -16,7 +19,6 @@ interface FormData {
 }
 
 export default function Form() {
-
   // --- Form state ---
   const [formData, setFormData] = useState<FormData>({
     name: "",
@@ -61,7 +63,10 @@ export default function Form() {
     submitting ||
     (isLoginMode ? isLoginInvalid : isAddInvalid || isEditInvalid);
 
-  type InputElements = | HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+  type InputElements =
+    | HTMLInputElement
+    | HTMLTextAreaElement
+    | HTMLSelectElement;
 
   const handleChange = (e: ChangeEvent<InputElements>) => {
     const target = e.target;
@@ -95,12 +100,11 @@ export default function Form() {
       }
 
       if (isLoginMode) {
-        const result = await loginAdmin({
+        await loginAdmin({
           email: email ?? "",
           password: password ?? "",
         }).unwrap();
-
-        dispatch(setLoggedIn({ email: result.email, role: result.role }));
+        dispatch(setLoggedIn());
         return;
       }
 
@@ -117,7 +121,10 @@ export default function Form() {
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err: any) {
       const action = isLoginMode ? "login" : isAddMode ? "add" : "edit";
-      const message = err?.data?.message ?? err?.error ?? (err instanceof Error ? err.message : "Unknown error");
+      const message =
+        err?.data?.message ??
+        err?.error ??
+        (err instanceof Error ? err.message : "Unknown error");
       setErrorMessage(`Failed to ${action}: ${message}`);
     } finally {
       setSubmitting(false);
@@ -146,7 +153,6 @@ export default function Form() {
               required={isAddMode}
             />
           </div>
-
           <div>
             <label htmlFor="price" className="block">
               Price (USD):

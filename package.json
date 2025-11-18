@@ -9,7 +9,7 @@
     "test": "jest --watch"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^2.9.1",
+    "@reduxjs/toolkit": "^2.10.1",
     "@supabase/supabase-js": "^2.78.0",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
@@ -34,6 +34,9 @@
     "@types/node": "^20",
     "@types/node-fetch": "^2.6.13",
     "@types/react": "^19",
+    "@types/react-redux": "^7.1.34",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "^16.0.3",
     "prisma": "^6.18.0",
     "tailwindcss": "^4.1.14",
     "ts-jest": "^29.4.5",
