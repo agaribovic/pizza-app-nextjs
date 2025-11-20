@@ -1,3 +1,4 @@
+import { Eye, EyeOff } from "lucide-react";
 import { useState, useRef, FormEvent, ChangeEvent } from "react";
 import {
   useAddPizzaMutation,
@@ -30,8 +31,9 @@ export default function Form() {
   });
 
   // --- Local state ---
-  const [submitting, setSubmitting] = useState(false);
+  const [submitting, setSubmitting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const numberRef = useRef<HTMLInputElement>(null);
 
@@ -220,18 +222,25 @@ export default function Form() {
             />
           </div>
 
-          <div>
-            <label htmlFor="password" className="block">
-              Password:
-            </label>
+          <div className="relative w-full max-w-sm">
+            <label htmlFor="password">Password:</label>
+
             <input
+              id="password"
               name="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
               className="border rounded p-2 w-full"
               defaultValue={formData.password}
               onChange={handleChange}
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute bottom-1/13 right-2 -translate-y-1/2 text-gray-400 hover:text-gray-800 cursor-pointer"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
         </>
       )}
