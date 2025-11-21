@@ -1,4 +1,6 @@
 import "../styles/globals.css";
+import { ReactNode, FC } from "react";
+
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import ReduxProvider from "@/redux/ReduxProvider";
@@ -8,20 +10,22 @@ export const metadata = {
   description: "Full stack web app",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+interface RootLayoutProps {
+  children: ReactNode;
+}
+
+const RootLayout: FC<RootLayoutProps> = ({ children }) => {
   return (
     <html lang="en">
       <body>
         <ReduxProvider>
           <Header />
-          {children}
+          <main className="flex-1">{children}</main>
           <Footer />
         </ReduxProvider>
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;

@@ -22,7 +22,6 @@ export const adminApi = createApi({
     credentials: "include",
   }),
   tagTypes: ["Admin"],
-
   endpoints: (builder) => ({
     getAdmin: builder.query<AdminData, void>({
       query: () => "/api/admin",
@@ -30,10 +29,10 @@ export const adminApi = createApi({
     }),
 
     loginAdmin: builder.mutation<LoginResponse, LoginRequest>({
-      query: (body) => ({
+      query: (credentials) => ({
         url: "/api/admin",
         method: "POST",
-        body,
+        body: credentials,
       }),
       invalidatesTags: ["Admin"],
     }),

@@ -1,69 +1,36 @@
-import { ChangeEvent } from "react";
+import React, { ChangeEvent, FC } from "react";
 import { PizzaType } from "@/app/page";
+import { SortOption, sortPizzas } from "@/utils/sortPizzas";
 
-type SortProps = {
+interface SortProps {
   pizzas: PizzaType[];
   onSort: (sorted: PizzaType[]) => void;
-};
+}
 
-export default function Sort({ pizzas, onSort }: SortProps) {
+const Sort: FC<SortProps> = ({ pizzas, onSort }) => {
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const { value } = e.target;
-    const sortedPizzas = [...pizzas];
-
-    switch (value) {
-      case "name-asc":
-        sortedPizzas.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case "name-desc":
-        sortedPizzas.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case "price-asc":
-        sortedPizzas.sort((a, b) => a.price - b.price);
-        break;
-      case "price-desc":
-        sortedPizzas.sort((a, b) => b.price - a.price);
-        break;
-      case "date-newest":
-        sortedPizzas.sort(
-          (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
-        break;
-      case "date-oldest":
-        sortedPizzas.sort(
-          (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-        break;
-      case "default":
-        break;
-    }
-
-    onSort(sortedPizzas);
+    const value = e.target.value as SortOption;
+    const sorted = sortPizzas(pizzas, value);
+    onSort(sorted);
   };
 
   return (
-    <>
-      <select
-        id="sortBy"
-        name="sortBy"
-        className="bg-white text-gray-800 font-semibold p-2
-                  rounded cursor-pointer border-none shadow-md focus:outline-none 
-                  focus:ring-2 focus:ring-gray-400 transition duration-200 text-xl"
-        onChange={handleChange}
-        defaultValue=""
-      >
-        <option value="" disabled>
-          Sort by:
-        </option>
-        <option value="name-asc">Name A → Z</option>
-        <option value="name-desc">Name Z → A</option>
-        <option value="price-asc">Price Low → High</option>
-        <option value="price-desc">Price High → Low</option>
-        <option value="date-newest">Newest First</option>
-        <option value="date-oldest">Oldest First</option>
-      </select>
-    </>
+    <select
+      id="sortBy"
+      name="sortBy"
+      className="bg-white text-gray-800 font-semibold p-2 rounded shadow-md focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer text-xl"
+      onChange={handleChange}
+      defaultValue=""
+    >
+      <option value="" disabled>Sort by:</option>
+      <option value="name-asc">Name A → Z</option>
+      <option value="name-desc">Name Z → A</option>
+      <option value="price-asc">Price Low → High</option>
+      <option value="price-desc">Price High → Low</option>
+      <option value="date-newest">Newest First</option>
+      <option value="date-oldest">Oldest First</option>
+    </select>
   );
-}
+};
+
+export default React.memo(Sort);

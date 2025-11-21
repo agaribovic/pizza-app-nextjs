@@ -19,8 +19,7 @@ interface FormData {
   password?: string;
 }
 
-export default function Form() {
-  // --- Form state ---
+const Form: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     price: 0.0,
@@ -30,37 +29,30 @@ export default function Form() {
     password: "",
   });
 
-  // --- Local state ---
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const numberRef = useRef<HTMLInputElement>(null);
 
-  // --- API hooks ---
   const [addPizza] = useAddPizzaMutation();
   const [editPizza] = useEditPizzaMutation();
   const [loginAdmin] = useLoginAdminMutation();
 
-  // --- Redux selector ---
   const modalType = useSelector((state: RootState) => state.modalType);
   const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
   const dispatch = useDispatch<AppDispatch>();
 
-  // --- Form data ---
   const { name, price, image, description, email, password } = formData;
 
-  // --- Mode flags ---
   const isAddMode = modalType.value === "pizzaOrder";
   const isEditMode = modalType.value === "pizzaEdit";
   const isLoginMode = !isLoggedIn;
 
-  // --- Validation flags ---
   const isAddInvalid = isAddMode && (!name || !price || !image || !description);
   const isEditInvalid = isEditMode && !name && !price && !image && !description;
   const isLoginInvalid = !email || !password;
 
-  // --- Button disabled state ---
   const btnDisabled =
     submitting ||
     (isLoginMode ? isLoginInvalid : isAddInvalid || isEditInvalid);
@@ -150,7 +142,6 @@ export default function Form() {
               defaultValue={modalType.selectedPizza?.name}
               onChange={handleChange}
               className="border rounded p-2 w-full"
-              id="name"
               placeholder="Margherita"
               required={isAddMode}
             />
@@ -166,7 +157,6 @@ export default function Form() {
               onChange={handleChange}
               ref={numberRef}
               className="border rounded p-2 w-full"
-              id="price"
               min="1"
               max="200"
               step="0.01"
@@ -185,7 +175,6 @@ export default function Form() {
               onChange={handleChange}
               ref={fileInputRef}
               className="border rounded p-2 w-full"
-              id="image"
               required={isAddMode}
             />
           </div>
@@ -226,7 +215,6 @@ export default function Form() {
             <label htmlFor="password">Password:</label>
 
             <input
-              id="password"
               name="password"
               type={showPassword ? "text" : "password"}
               placeholder="Password"
@@ -259,3 +247,5 @@ export default function Form() {
     </form>
   );
 }
+
+export default Form;

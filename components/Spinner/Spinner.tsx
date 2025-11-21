@@ -1,17 +1,17 @@
-import React from "react";
+import { FC } from "react";
 
 interface SpinnerProps {
   size?: number;
 }
 
-const Spinner = ({ size }: SpinnerProps) => {
+const Spinner: FC<SpinnerProps> = ({ size = 300 }) => {
   return (
     <div className="flex justify-center items-center">
       <svg
         data-testid="spinner-svg"
         className="animate-spin"
-        width={size ?? 300}
-        height={size ?? 300}
+        width={size}
+        height={size}
         viewBox="0 0 100 100"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

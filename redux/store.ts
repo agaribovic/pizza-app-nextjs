@@ -16,7 +16,8 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
       .concat(pizzaApi.middleware)
-      .concat(adminApi.middleware)
+      .concat(adminApi.middleware),
+  devTools: process.env.NODE_ENV !== "production"
 });
 
 export type RootState = ReturnType<typeof store.getState>;

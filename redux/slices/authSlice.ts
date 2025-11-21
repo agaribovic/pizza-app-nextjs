@@ -1,6 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+interface AuthState {
+  isLoggedIn: boolean;
+}
+
+const initialState: AuthState = {
   isLoggedIn: false,
 };
 
@@ -14,7 +18,7 @@ export const authSlice = createSlice({
     setLoggedOut: (state) => {
       state.isLoggedIn = false;
     },
-  },
+  }
 });
 
 export const { setLoggedIn, setLoggedOut } = authSlice.actions;
